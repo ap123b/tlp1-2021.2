@@ -1,0 +1,127 @@
+-- Parte 1: Livraria
+DROP TABLE IF EXISTS Exemplar, Livro, Revista, Midia, Emprestimo, Aluno, Curso;
+
+CREATE TABLE Exemplar (
+	id SERIAL NOT NULL,
+	codigo VARCHAR(20) NOT NULL,
+	titulo VARCHAR(20) NOT NULL,
+	ano INTEGER NOT NULL,
+	idioma VARCHAR(20) NOT NULL,
+	
+	CONSTRAINT pkExemplar PRIMARY KEY(id)
+);
+
+CREATE TABLE Livro (
+	id SERIAL NOT NULL,
+	idExemplar INTEGER NOT NULl,
+	editora VARCHAR(20) NOT NULL,
+	numeroPaginas INTEGER NOT NULL,
+	ISBN VARCHAR(11) NOT NULL,
+	
+	CONSTRAINT pkLivro PRIMARY KEY(id),
+	CONSTRAINT fkExemplar FOREIGN KEY(idExemplar) REFERENCES Exemplar(id)
+);
+
+CREATE TABLE Revista (
+	id SERIAL NOT NULL,
+	idExemplar INTEGER NOT NULl,
+	periodicidade VARCHAR(20) NOT NULL,
+	numero INTEGER NOT NULL,
+	volume INTEGER NOT NULL,
+	ISNN VARCHAR(9) NOT NULL,
+	
+	CONSTRAINT pkRevista PRIMARY KEY(id),
+	CONSTRAINT fkExemplar FOREIGN KEY(idExemplar) REFERENCES Exemplar(id)
+);
+
+CREATE TABLE Midia (
+	id SERIAL NOT NULL,
+	idExemplar INTEGER NOT NULL,
+	tipo VARCHAR(20) NOT NULL,
+	duracao NUMERIC(10,2) NOT NULL,
+	
+	CONSTRAINT pkMidia PRIMARY KEY(id),
+	CONSTRAINT fkExemplar FOREIGN KEY(idExemplar) REFERENCES Exemplar(id)
+);
+
+CREATE TABLE Curso (
+	id SERIAL NOT NULL,
+	nome VARCHAR(20) NOT NULL,
+	quantidadeSemestre INTEGER NOT NULL,
+	tipo VARCHAR(20) NOT NULL,
+	
+	CONSTRAINT pkCurso PRIMARY KEY(id)
+);
+
+CREATE TABLE Aluno (
+	id SERIAL NOT NULL,
+	idCurso INTEGER NOT NULL,
+	nome VARCHAR(20) NOT NULL,
+	cpf VARCHAR(11) NOT NULL,
+	ra VARCHAR(10) NOT NULL,
+	
+	CONSTRAINT pkAluno PRIMARY KEY(id),
+	CONSTRAINT fkCurso FOREIGN KEY(idCurso) REFERENCES Curso(id)
+);
+
+CREATE TABLE Emprestimo (
+	id SERIAL NOT NULL,
+	idExemplar INTEGER NOT NULL,
+	idAluno INTEGER NOT NULL,
+	dataRetirada DATE NOT NULL,
+	dataDevolucao DATE NOT NULL,
+	
+	CONSTRAINT pkEmprestimo PRIMARY KEY(id),
+	CONSTRAINT fkExemplar FOREIGN KEY(idExemplar) REFERENCES Exemplar(id),
+	CONSTRAINT fkAluno FOREIGN KEY(idAluno) REFERENCES Aluno(id)
+)
+
+-- Parte 2: Banco
+DROP TABLE IF EXISTS Cliente, Conta, Corrente, Poupanca, Movimento;
+
+CREATE TABLE Cliente (
+	id SERIAL NOT NULL,
+	nome VARCHAR(20) NOT NULL,
+	email VARCHAR(20) NOT NULL,
+	cpf VARCHAR(11) NOT NULL,
+	
+	CONSTRAINT pkCliente PRIMARY KEY(id)
+);
+
+CREATE TABLE Conta (
+	id SERIAL NOT NULL,
+	numero VARCHAR(20) NOT NULL,
+	agencia VARCHAR(20) NOT NULL,
+	saldo NUMERIC(10,2) NOT NULL,
+	
+	CONSTRAINT pkConta PRIMARY KEY(id)
+);
+
+CREATE TABLE Corrente (
+	id SERIAL NOT NULL,
+	idConta INTEGER NOT NULL,
+	limite NUMERIC(10,2) NOT NULL,
+	
+	CONSTRAINT pkCorrente PRIMARY KEY(id),
+	CONSTRAINT fkConta FOREIGN KEY(idConta) REFERENCES Conta(id)
+);
+
+CREATE TABLE Poupanca (
+	id SERIAL NOT NULL,
+	idConta INTEGER NOT NULL,
+	juro NUMERIC(10,2) NOT NULL,
+	
+	CONSTRAINT pkPoupanca PRIMARY KEY(id),
+	CONSTRAINT fkConta FOREIGN KEY(idConta) REFERENCES Conta(id)
+);
+
+CREATE TABLE Movimento (
+	id SERIAL NOT NULL,
+	idConta INTEGER NOT NULL,
+	dataEfetuada DATE NOT NULL,
+	tipo VARCHAR(20) NOT NULL,
+	valor NUMERIC(10,2) NOT NULL,
+	
+	CONSTRAINT pkMovimento PRIMARY KEY(id),
+	CONSTRAINT fkMovimento FOREIGN KEY(idConta) REFERENCES Conta(id)
+);
